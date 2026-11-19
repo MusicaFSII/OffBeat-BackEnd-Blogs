@@ -22,16 +22,16 @@ public class Blog {
     @Column(name="id_blog")
     private int idBlog;
 
-    @Column(name="codigo_blog")
+    @Column(name="codigo_blog", unique = true)
     private String codigo;
 
-    @Column(name="titulo")
+    @Column(name="titulo", unique = true, nullable = false)
     private String titulo;
 
-    @Column(name="contenido")
+    @Column(name="contenido", nullable = false)
     private String contenido;
 
     @Column(name="imagen")
-    private byte[] imagen;
+    private String imagen;
 
 }

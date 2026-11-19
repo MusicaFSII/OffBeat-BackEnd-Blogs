@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data 
 @NoArgsConstructor 
 @AllArgsConstructor 
-public class BlogDTO {
+public class ResponseDTO {
     private String codigo;
     private String titulo;
     private String contenido;

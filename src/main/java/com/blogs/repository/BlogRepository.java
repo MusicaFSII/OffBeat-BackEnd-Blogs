@@ -8,6 +8,5 @@ import com.blogs.model.Blog;
 public interface BlogRepository extends JpaRepository<Blog, Integer> {
 
     Blog findByCodigo(String codigo);
-
     Blog deleteByCodigo(String codigo);
 }
