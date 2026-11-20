@@ -33,5 +33,4 @@ public class Blog {
 
     @Column(name="imagen")
     private String imagen;
-
 }

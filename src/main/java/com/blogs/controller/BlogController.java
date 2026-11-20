@@ -1,5 +1,6 @@
 package com.blogs.controller;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -7,16 +8,18 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.blogs.dto.CreateDTO;
 import com.blogs.dto.ResponseDTO;
 import com.blogs.service.BlogService;
+
+import jakarta.validation.Valid;
 
 @CrossOrigin(origins="*")
 @RestController 
@@ -51,15 +54,15 @@ public class BlogController {
 
     /*------------Método para guardar nuevos blogs------------*/
     @PostMapping("/guardar")
-    public ResponseEntity<ResponseDTO> guardarBlog(@RequestBody CreateDTO dto){
-        return ResponseEntity.status(HttpStatus.CREATED).body(blogService.registrarBlog(dto));
+    public ResponseEntity<ResponseDTO> guardarBlog(@Valid @ModelAttribute CreateDTO dto)throws IOException{
+        return ResponseEntity.status(HttpStatus.CREATED).body(blogService.registrarBlog(dto) );
     }
 
     /*##-------------------------------METODOS PUT-------------------------------##*/
 
     /*------------Método para guardar nuevos blogs------------*/
     @PutMapping("/actualizar/{codigo}")
-    public ResponseEntity<ResponseDTO> actualizarBlog(@PathVariable("codigo") String codigo, @RequestBody CreateDTO dto){
+    public ResponseEntity<ResponseDTO> actualizarBlog(@PathVariable("codigo") String codigo, @ModelAttribute CreateDTO dto)throws IOException{
         ResponseDTO blog = blogService.actualizarBlog(codigo, dto);
         if (blog == null) {
             return ResponseEntity.notFound().build();

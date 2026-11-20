@@ -18,10 +18,9 @@ public class BlogMapper {
 
         blog.setTitulo(dto.getTitulo());
         blog.setContenido(dto.getContenido());
-        blog.setImagen(dto.getImagen());
         
         return blog;
-    };
+    }
 
     public ResponseDTO toResponseDTO(Blog blog){
         if(blog == null){

@@ -1,5 +1,8 @@
 package com.blogs.service;
 
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,8 @@ import com.blogs.mapper.BlogMapper;
 import com.blogs.model.Blog;
 import com.blogs.repository.BlogRepository;
 
+import java.io.IOException;
+import java.nio.file.Path;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -36,17 +41,34 @@ public class BlogService {
     /*##-------------------------------METODOS PARA AGREGAR BLOGS (POST)-------------------------------*/
 
     /*------------Método para agregar nuevos blogs------------*/
-    public ResponseDTO registrarBlog(CreateDTO dto){
+    public ResponseDTO registrarBlog(CreateDTO dto) throws IOException {
+
         Blog blog = blogMapper.toEntity(dto);
-        blog.setCodigo("BL" + blog.getIdBlog());  
+
+        Path ruta = Paths.get("uploads/blogs", dto.getImagen().getOriginalFilename());
+        Files.createDirectories(ruta.getParent());
+        Files.copy(
+            dto.getImagen().getInputStream(),
+            ruta,
+            StandardCopyOption.REPLACE_EXISTING
+        );
+
+        blog.setImagen(dto.getImagen().getOriginalFilename());
+
+        blog = blogRepo.save(blog);
+
+        blog.setCodigo("BL" + blog.getIdBlog());
+
         return blogMapper.toResponseDTO(blogRepo.save(blog));
     }
 
     /*##-------------------------------METODOS PARA ACTUALIZAR BLOGS (PUT)-------------------------------##*/
 
     /*------------Método para actualizar blogs------------*/
-    public ResponseDTO actualizarBlog(String codigo, CreateDTO dto) {
-    Blog existing = blogRepo.findByCodigo(codigo);
+    public ResponseDTO actualizarBlog(String codigo, CreateDTO dto) throws IOException {
+
+        Blog existing = blogRepo.findByCodigo(codigo);
+
         if (existing == null) {
             return null;
         }
@@ -54,12 +76,29 @@ public class BlogService {
         if (dto.getTitulo() != null && !dto.getTitulo().isBlank()) {
             existing.setTitulo(dto.getTitulo());
         }
+
         if (dto.getContenido() != null && !dto.getContenido().isBlank()) {
             existing.setContenido(dto.getContenido());
         }
-        if (dto.getImagen() != null && !dto.getImagen().isBlank()) {
-            existing.setImagen(dto.getImagen());
+
+        if (dto.getImagen() != null && !dto.getImagen().isEmpty()) {
+
+            Path ruta = Paths.get(
+                "uploads/blogs",
+                dto.getImagen().getOriginalFilename()
+            );
+
+            Files.createDirectories(ruta.getParent());
+
+            Files.copy(
+                dto.getImagen().getInputStream(),
+                ruta,
+                StandardCopyOption.REPLACE_EXISTING
+            );
+
+            existing.setImagen(dto.getImagen().getOriginalFilename());
         }
+
         return blogMapper.toResponseDTO(blogRepo.save(existing));
     }
 
