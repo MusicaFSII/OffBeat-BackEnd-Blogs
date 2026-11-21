@@ -1,6 +1,8 @@
 package com.blogs.service;
 
+import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -10,12 +12,11 @@ import org.springframework.stereotype.Service;
 
 import com.blogs.dto.CreateDTO;
 import com.blogs.dto.ResponseDTO;
+import com.blogs.exception.ResourceNotFoundException;
 import com.blogs.mapper.BlogMapper;
 import com.blogs.model.Blog;
 import com.blogs.repository.BlogRepository;
 
-import java.io.IOException;
-import java.nio.file.Path;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -35,6 +36,11 @@ public class BlogService {
 
     /*------------Método para obtener blogs por el código------------*/
     public ResponseDTO obtenerBlogsByCodigo(String codigo){
+        Blog blog = blogRepo.findByCodigo(codigo);
+
+        if (blog == null) {
+            throw new ResourceNotFoundException("No se encontró el blog " + codigo);
+        }
         return blogMapper.toResponseDTO(blogRepo.findByCodigo(codigo));
     }
 
@@ -70,7 +76,7 @@ public class BlogService {
         Blog existing = blogRepo.findByCodigo(codigo);
 
         if (existing == null) {
-            return null;
+            throw new ResourceNotFoundException("No se encontró el blog con código " + codigo);
         }
 
         if (dto.getTitulo() != null && !dto.getTitulo().isBlank()) {
@@ -107,7 +113,7 @@ public class BlogService {
     @Transactional 
     public String eliminarBlog(String codigo){
         if (blogRepo.findByCodigo(codigo) == null) {
-            return null; 
+            throw new ResourceNotFoundException("No se encontró el blog con código " + codigo);
         }
         blogRepo.deleteByCodigo(codigo);
         return "El blog " + codigo + " ha sido eliminado";
