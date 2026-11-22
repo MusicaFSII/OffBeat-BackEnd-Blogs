@@ -31,7 +31,7 @@ public class BlogMapper {
             blog.getCodigo(),
             blog.getTitulo(),
             blog.getContenido(),
-            blog.getImagen()
+            blog.getImagen() == null ? null : "/uploads/blogs/" + blog.getImagen()
         );
     }
 }
