@@ -28,7 +28,7 @@ public class Blog {
     @Column(name="titulo", unique = true, nullable = false)
     private String titulo;
 
-    @Column(name="contenido", nullable = false)
+    @Column(name="contenido", nullable = false, columnDefinition = "TEXT")
     private String contenido;
 
     @Column(name="imagen")

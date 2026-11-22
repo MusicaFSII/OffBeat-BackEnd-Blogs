@@ -9,4 +9,6 @@ public interface BlogRepository extends JpaRepository<Blog, Integer> {
 
     Blog findByCodigo(String codigo);
     Blog deleteByCodigo(String codigo);
+    boolean existsByTitulo(String titulo);
+    boolean existsByTituloAndCodigoNot(String titulo, String codigo);
 }
